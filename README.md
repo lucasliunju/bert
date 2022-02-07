@@ -1,21 +1,19 @@
 # Download and prepare the data
 
-Building the Docker container
-```shell
-docker build --pull -t <docker/registry>/mlperf-nvidia:language_model .
-docker push <docker/registry>/mlperf-nvidia:language_model
-```
-
 Start the container interactively, mounting the directory you want to store the expieriment data as `/workspace/bert_data`
 ```
-docker run -it --runtime=nvidia --ipc=host (...) -v /data/mlperf/bert:/workspace/bert_data mlperf-nvidia:language_model
+docker run -it --runtime=nvidia --ipc=host --gpus=all -dit --name mlperf_bert_nvidia_ly -v /nvme_data/guest_01/mlperf_bert:/workspace/bert_data vinilv/mlperf-nvidia:language_model
+docker start mlperf_bert_nvidia_ly
 ```
 
 Within the container, run
 ```
-cd /workspace/bert
-./input_preprocessing/prepare_data.sh --outputdir /workspace/bert_data
+source config_DGXA100_1x8x56x1.sh
+bash run_with_docker.sh
 ```
+
+
+
 This script will download the required data and model files from [MLCommons members Google Drive location](https://drive.google.com/drive/u/0/folders/1oQF4diVHNPCclykwdvQJw8n_VIWwV0PT) creating the following foldes structure
 ```
 /workspace/bert_data/
